@@ -1,76 +1,64 @@
 ---
 layout: default
+title: Home
+cover: false
+about: 'about.html'
 ---
-<div class="container">
-	<div class="row">
-	{% if site.posts.size > 0 %}
-		{%- for post in paginator.posts -%}
-		{% if forloop.index <= 1 %}
-		<div class="col col-12">
-			<article class="article-first">
-				<div class="article-image-first" style="background-image: url({{"/img/" | prepend: site.baseurl | append : post.image}})">
-					<div class="article-content-first">
-						<div class="article-tag">
-						{% if post.tags.size >= 1 %}
-							{% for tag in post.tags %}
-							<a href="{{ site.baseurl }}/tags#{{tag}}" class="tag">{{ tag }}</a>
-							{% endfor %}
-						{% else %} {% endif %}
-						</div>
-						<h2 class="article-title"><a href="{{ post.url | prepend: site.baseurl }}">{{post.title}}</a></h2>
-						<p class="article-excerpt">{% if post.description %}{{ post.description | strip_html | truncate: 163 }}{% else %}{{ post.content | strip_html | truncate: 163 }}{% endif %}</p>
-						<a href="{{ post.url | prepend: site.baseurl }}" class="button read-more">Read More</a>
-					</div>
-				</div>
-			</article> <!-- /.article-first -->
-		</div>
-		{% endif %}
 
-		{% endfor %}
-	{% endif %}
-	</div>
-</div>
+<header class="main-header {% if page.cover %}" style="background-image: url({{ page.cover }}) {%else%}no-cover{% endif %}">
+    <nav class="main-nav overlay clearfix">
+            {% if page.logo %}
+                <a class="blog-logo" href="{{ site.baseurl }}">
+                    <img src="{{ page.logo }}" alt="Blog Logo" />
+                </a>
+            {% endif %}
+        <a class="subscribe-button icon-feed" href="{{'feed.xml' | relative_url }} ">Subscribe</a>
+    </nav>
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">{{ site.name }}</h1>
+            <h2 class="page-description">
+                {% if site.description %} {{ site.description }}. {% endif %}
+                {% if page.about %} <a href='{{page.about | relative_url}}'> About me </a> {% endif %}
+            </h2>
+        </div>
+    </div>
+    <a class="scroll-down icon-arrow-left" href="#content" data-offset="-45"><span class="hidden">Scroll Down</span></a>
+</header>
 
-<div class="container">
-	<div class="row">
-		<div class="col col-12 col-t-8">
-			<div class="row">
-			{%- for post in paginator.posts offset: 1 -%}
-				<article class="article col col-12 col-t-6">
-					<div class="article-box">
-						<div class="article-head">
-							<a href="{{ post.url | prepend: site.baseurl }}" class="article-image" style="background-image: url({{"/img/" | prepend: site.baseurl | append : post.image}})">
-								<div class="image-overlay">
-									<span class="image-overlay-text">{{post.title | slice: 0}}</span>
-								</div>
-							</a>
-						</div>
-						<div class="article-content">
-							<div class="article-info">
-								<div class="article-date">
-									<span class="date"><time datetime="{{ post.date | date_to_xmlschema }}">{% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}{{ post.date | date: date_format }}</time></span>
-								</div>
-								<div class="article-tag">
-								{% if post.tags.size >= 1 %}
-									{% for tag in post.tags %}
-									<a href="{{ site.baseurl }}/tags#{{tag}}" class="tag">{{ tag }}</a>
-									{% endfor %}
-								{% else %} {% endif %}
-								</div>
-							</div>
-							<h2 class="article-title">
-								<a href="{{ post.url | prepend: site.baseurl }}">{{post.title}}</a>
-							</h2>
-							<p class="article-excerpt">{% if post.description %}{{ post.description | strip_html | truncate: 135 }}{% else %}{{ post.content | strip_html | truncate: 135 }}{% endif %}</p>
-						</div>
-					</div>
-				</article> <!-- /.article -->
-			{% endfor %}
-			</div>
-			{% include pagination.html %}
-		</div>
-		<div class="col col-12 col-t-4">
-			{% include sidebar.html %}
-		</div>
-	</div>
-</div>
+
+<main id="content" class="content" role="main">
+
+
+    <div class="extra-pagination inner">
+        {% include pagination.html %}
+    </div>
+
+    {% for post in paginator.posts %}
+
+    <article class="post">
+        <header class="post-header">
+            <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        </header>
+        <section class="post-excerpt">
+            {{ post.excerpt }} <a class="read-more" href="{{ post.url | relative_url }}">&raquo;</a>
+        </section>
+        <footer class="post-meta">
+            {% if site.author %}
+                <img class="author-thumb" src="{{'/assets/images/profile.png' | relative_url}}" alt="Author's profile picture" nopin="nopin" />
+                {{ site.author }}
+            {% endif %}
+            {% if post.categories.size > 0 %} 
+                {{ post.categories | array_to_sentence_string | prepend: 'on ' }} 
+            {% endif %}
+            <time class="post-date" datetime="{{ post.date | date:"%Y-%m-%d" }}">
+                {{ post.date | date_to_string }}
+            </time> 
+        </footer>
+    </article>
+
+    {% endfor %}
+
+    {% include pagination.html %}
+
+</main>
